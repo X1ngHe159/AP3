@@ -10,6 +10,9 @@
 
 ![庭院总览](docs/screenshots/01-overview.png)
 
+> **在线访问（GitHub Pages，任意电脑浏览器直接打开）**：<https://x1nghe159.github.io/AP3/>
+> **源码仓库**：<https://github.com/X1ngHe159/AP3>
+
 ---
 
 ## 目录
@@ -517,12 +520,22 @@ id = px[0] + px[1] * 256 + px[2] * 65536;   // 0 = 没点到任何物体
 
 ## 10. 部署到公网 URL
 
-课程要求"公网 URL 可直接访问"。本项目是纯静态站点，部署最简单的方式是 **GitHub Pages**：
+本项目已部署到 **GitHub Pages**，任意电脑浏览器可直接打开：
 
-1. 在 GitHub 新建仓库（例如 `ap3-lighting`），把本项目**根目录**下的所有文件推上去
+- **在线场景**：<https://x1nghe159.github.io/AP3/>
+- **源码仓库**：<https://github.com/X1ngHe159/AP3>
+- **部署方式**：仓库 `main` 分支根目录 → *Settings → Pages → Deploy from a branch → `main` / `/ (root)`*；
+- **线上验证**：`node tools/verify-pages.mjs` 用无头 Edge 打开公网地址，检查 `window.__AP3_READY__`、
+  console 错误、4xx/5xx 请求与画面像素多样性，结果为 **PASS**（线上截图见下）。
+
+![线上部署验证（GitHub Pages 实际截图）](docs/screenshots/25-deployed-pages.png)
+
+自己重新部署的步骤（换账号 / 换仓库时）：
+
+1. 在 GitHub 新建仓库，把本项目**根目录**下的所有文件推上去
    （`index.html` 必须在仓库根目录，`assets/`、`src/`、`lib/` 保持相对路径不变）；
 2. 仓库 → **Settings → Pages** → Source 选 `Deploy from a branch`，Branch 选 `main` / 根目录 `/ (root)`，保存；
-3. 等待 1 分钟左右，访问 `https://<用户名>.github.io/ap3-lighting/` 即可。
+3. 等待 1 分钟左右，访问 `https://<用户名>.github.io/<仓库名>/` 即可。
 
 > 注意：**不要**用 `file://` 直接打开（见第 1 节说明）；也不需要 Node 服务器——GitHub Pages 本身就是静态托管。
 > 其他等价方案：Gitee Pages、Vercel、Netlify、学校课程平台的静态目录。
