@@ -1,0 +1,151 @@
+<!doctype html>
+<!--
+  AP3 · 光照与纹理场景 —— 页面骨架
+  ------------------------------------------------------------------
+  这个文件只负责「骨架 + 固定 id」：
+    - canvas#gl-canvas      全屏 WebGL 画布（尺寸由 src/main.js 每帧设置）
+    - header#title-bar      左上标题
+    - aside#panel           右侧参数面板容器（控件由 src/ui.js 按 schema 生成，这里不手写控件）
+    - #compare-label        三联分屏标签（main.js 控制显隐与文字）
+    - footer#hud            底部状态栏（src/ui.js 的 setHud 写）
+    - #toast / #loading / #error-box / #help  若干 UI 覆盖层
+  脚本顺序：教材 Common 经典脚本（window.MV 等）必须先于 ES Module 入口加载。
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>AP3 · 光照与纹理场景</title>
+  <!-- 内联空图标，避免浏览器请求 favicon.ico 产生 404 控制台噪音 -->
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ================================================================ -->
+  <!-- 1. 全屏 WebGL 画布（宽高由 JS 按 devicePixelRatio 设置，不写死属性） -->
+  <!-- ================================================================ -->
+  <canvas id="gl-canvas"><!-- WebGL 2.0 画布 --></canvas>
+
+  <!-- ================================================================ -->
+  <!-- 2. 加载遮罩：body.loaded 后由 CSS 淡出（main.js 资源就绪后加 loaded） -->
+  <!-- ================================================================ -->
+  <div id="loading" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <p id="loading-text">正在加载纹理与着色器…</p>
+    <p class="hint">需通过静态服务器访问（如 <code>python -m http.server 8134</code>）</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 3. 左上标题 -->
+  <!-- ================================================================ -->
+  <header id="title-bar">
+    <h1>AP3 · 光照与纹理场景</h1>
+    <p class="subtitle">手写 Phong 光照 · 位图纹理 · 立方体环境贴图 · 阴影贴图 · 拾取调参</p>
+  </header>
+
+  <!-- ================================================================ -->
+  <!-- 4. 右侧参数面板：这里只放骨架，src/ui.js 会在 #btn-collapse 之后 -->
+  <!--    依次插入 <section class="group">，请勿手写控件。               -->
+  <!-- ================================================================ -->
+  <aside id="panel" aria-label="参数控制面板">
+    <div class="panel-head">
+      <h2>控制面板</h2>
+      <button id="btn-collapse" type="button" title="收起/展开面板" aria-expanded="true">−</button>
+    </div>
+    <!-- src/ui.js 生成的分组追加在这里 -->
+  </aside>
+
+  <!-- ================================================================ -->
+  <!-- 5. 三联分屏标签：默认 display:none；main.js 加 body.compare-split -->
+  <!--    后显示，并写入 #cmp-a / #cmp-b / #cmp-c 的 textContent。       -->
+  <!-- ================================================================ -->
+  <div id="compare-label" aria-hidden="true">
+    <span id="cmp-a">Phong</span>
+    <span id="cmp-b">Blinn–Phong</span>
+    <span id="cmp-c">Toon</span>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 6. 短暂提示：拾取到物体时显示名字；.show 时淡入（ui.js: showToast） -->
+  <!-- ================================================================ -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ================================================================ -->
+  <!-- 7. 底部状态栏：id 必须精确，src/ui.js 的 setHud 会写这些 span      -->
+  <!-- ================================================================ -->
+  <footer id="hud">
+    <div class="hud-inner">
+      <span id="hud-fps">— FPS</span>
+      <span class="sep">·</span>
+      <span id="hud-tris">— 三角形</span>
+      <span class="sep">·</span>
+      <span id="hud-selected">选中：—</span>
+      <span class="sep">·</span>
+      <span id="hud-shading">着色：Phong</span>
+      <span class="sep">·</span>
+      <span id="hud-shadow">阴影：开</span>
+      <span class="sep">·</span>
+      <span id="hud-gpu">GPU：—</span>
+    </div>
+  </footer>
+
+  <!-- ================================================================ -->
+  <!-- 8. 操作说明（右下角，默认折叠）：内容与 CONTRACT.md 第 7 节一致   -->
+  <!--    键盘快捷键由 src/main.js 实现，这里只写静态说明。              -->
+  <!-- ================================================================ -->
+  <div id="help">
+    <details>
+      <summary>
+        <span class="help-icon" aria-hidden="true">?</span>
+        <span class="help-label">操作说明</span>
+      </summary>
+      <div class="help-body">
+        <p class="help-title">鼠标</p>
+        <ul>
+          <li><b>左键拖拽</b> 环绕旋转视角</li>
+          <li><b>滚轮</b> 缩放（拉近 / 拉远）</li>
+          <li><b>单击（无拖拽）</b> 颜色编码拾取物体：选中高亮 + 面板切换到该物体材质</li>
+          <li><b>右键拖拽</b> 平移环绕中心（target）</li>
+        </ul>
+        <p class="help-title">键盘</p>
+        <ul>
+          <li><b>1 / 2 / 3</b> 着色模型：Phong / Blinn-Phong / Toon</li>
+          <li><b>A / D / S</b> 环境光 / 漫反射 / 镜面三分量开关</li>
+          <li><b>L</b> 方向光（太阳）开关</li>
+          <li><b>P</b> 点光开关</li>
+          <li><b>H</b> 阴影开关</li>
+          <li><b>N</b> 法线贴图开关</li>
+          <li><b>C</b> 环境贴图开关</li>
+          <li><b>T</b> 纹理开关</li>
+          <li><b>X</b> 三联分屏对比（Phong / Blinn-Phong / Toon）</li>
+          <li><b>F</b> 线框模式</li>
+          <li><b>O</b> 正交 / 透视投影切换</li>
+          <li><b>R</b> 重置视角</li>
+          <li><b>空格</b> 暂停 / 继续动画（太阳缓慢移动 + 自动环绕）</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 9. 错误提示（默认隐藏）：WebGL 2.0 不支持 / 资源加载失败时显示。  -->
+  <!--    main.js 可 style.display='flex' 或加 class="show"。           -->
+  <!-- ================================================================ -->
+  <div id="error-box" role="alertdialog" aria-live="assertive">
+    <div class="error-card">
+      <h2>无法启动场景</h2>
+      <p id="error-text">当前浏览器不支持 WebGL 2.0，或纹理 / 着色器资源加载失败。</p>
+      <p class="hint">请使用最新版 Chrome / Edge / Firefox，并确认通过静态服务器访问。</p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 10. 脚本：教材 Common 工具库（经典脚本）必须先于 ES Module 入口  -->
+  <!-- ================================================================ -->
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/initShaders.js"></script>
+  <script src="lib/MV.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

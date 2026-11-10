@@ -1,0 +1,44 @@
+[
+  {
+    "file": "floor_wood.png",
+    "size": "512x512",
+    "usage": "房间木地板 / 庭院木地面：横向木板条 + 错缝拼法，UV 重复平铺（约 2 块板宽 = 1 m）",
+    "tileable": true
+  },
+  {
+    "file": "floor_wood_normal.png",
+    "size": "512x512",
+    "usage": "floor_wood 的切线空间法线贴图（板缝凹槽 + 木纹起伏），E1 法线贴图开关对比用",
+    "tileable": true
+  },
+  {
+    "file": "crate_wood.png",
+    "size": "512x512",
+    "usage": "木箱六个面：木板条 + 深色外框 + 四角金属包角 + 铆钉，UV 每面一张（可平铺）",
+    "tileable": true
+  },
+  {
+    "file": "crate_wood_normal.png",
+    "size": "512x512",
+    "usage": "crate_wood 的切线空间法线贴图（板条缝、外框、金属包角与铆钉凸起）",
+    "tileable": true
+  },
+  {
+    "file": "wall_plaster.png",
+    "size": "512x512",
+    "usage": "房间四壁 / 庭院围墙：暖灰米色抹灰，细颗粒 + 轻微污渍 + 低频明暗，可平铺",
+    "tileable": true
+  },
+  {
+    "file": "tile_checker.png",
+    "size": "512x512",
+    "usage": "UV 演示平面：8×8 双色棋盘格 + 细网格线，半透明 U→/V↓ 标注用于 README 讲 UV 数据流",
+    "tileable": true
+  },
+  {
+    "file": "marble.png",
+    "size": "512x512",
+    "usage": "台座 / 圆柱 / 雕塑底座：浅色大理石，柔和纹脉与细碎颗粒，可平铺",
+    "tileable": true
+  }
+]
